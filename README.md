@@ -35,4 +35,4 @@ The `analytics` folder contains code and instructions to manage and deploy *Airf
 
 ## License
 
-[MIT](/LICENSE)
+This library is licensed under the MIT-0 License. See the [LICENSE](LICENSE) file.
