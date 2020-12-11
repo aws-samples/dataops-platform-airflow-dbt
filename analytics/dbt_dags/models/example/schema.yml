@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: all_gross_sales_model
+    description: "Find all sales"
+  
+  - name: percentile_sales_model
+    description: "Get percentiles for all sales"
+
+  - name: top_sales_99.9_percentile_model
+    description: "Get top sales (99.9 percentile)"
+
+  - name: top_buyers_by_quantity_model
+    description: "Find top 10 buyers by quantity"
+
+  - name: top_buyer_data_model
+    description: "Get data on top buyers"

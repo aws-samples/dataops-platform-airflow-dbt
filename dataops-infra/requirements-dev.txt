@@ -1,0 +1,5 @@
+-r infra/requirements.txt
+
+black~=20.8b1
+cryptography~=3.2.1
+typing-extensions~=3.7.4.3

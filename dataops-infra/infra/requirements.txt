@@ -1,0 +1,12 @@
+aws-cdk.core==1.73.0
+aws_cdk.aws_rds==1.73.0
+aws_cdk.aws_ecs==1.73.0
+aws_cdk.aws_ecs_patterns==1.73.0
+aws_cdk.aws_iam==1.73.0
+aws_cdk.aws_secretsmanager==1.73.0
+aws_cdk.aws_ecr==1.73.0
+aws_cdk.aws_elasticloadbalancingv2==1.73.0
+aws_cdk.aws_logs==1.73.0
+aws_cdk.aws_elasticache==1.73.0
+aws_cdk.aws_redshift==1.73.0
+aws_cdk.aws_servicediscovery==1.73.0

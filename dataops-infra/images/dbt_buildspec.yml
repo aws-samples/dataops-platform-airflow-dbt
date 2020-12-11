@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo logging into ECR
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - npm install -g aws-cdk@1.73.0
+      - npm update
+      - python -m pip install -r infra/requirements.txt
+  build:
+    commands:
+      - echo Entered the build phase for dbt...
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG images/dbt/
+  post_build:
+    commands:
+      - echo Pushing dbt docker image...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - make codebuild_deploy_dbt

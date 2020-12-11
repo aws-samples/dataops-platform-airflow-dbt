@@ -1,0 +1,27 @@
+version: 0.2
+
+env:
+  variables:
+    BUILD_ROOT: "images/airflow"
+
+phases:
+  pre_build:
+    commands:
+      - echo logging into ECR
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - npm install -g aws-cdk@1.73.0
+      - npm update
+      - python -m pip install -r infra/requirements.txt
+  build:
+    commands:
+      - echo Entered the build phase for Airflow...
+      - docker build -t $REPOSITORY_URI/airflow_webserver_cdk:$IMAGE_TAG -f $BUILD_ROOT/webserver.Dockerfile $BUILD_ROOT
+      - docker build -t $REPOSITORY_URI/airflow_scheduler_cdk:$IMAGE_TAG -f $BUILD_ROOT/scheduler.Dockerfile $BUILD_ROOT
+      - docker build -t $REPOSITORY_URI/airflow_worker_cdk:$IMAGE_TAG -f $BUILD_ROOT/worker.Dockerfile $BUILD_ROOT
+  post_build:
+    commands:
+      - echo Pushing Airflow docker images...
+      - docker push $REPOSITORY_URI/airflow_webserver_cdk:$IMAGE_TAG
+      - docker push $REPOSITORY_URI/airflow_scheduler_cdk:$IMAGE_TAG
+      - docker push $REPOSITORY_URI/airflow_worker_cdk:$IMAGE_TAG
+      - make codebuild_deploy_airflow

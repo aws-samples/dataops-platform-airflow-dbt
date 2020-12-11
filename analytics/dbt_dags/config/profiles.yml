@@ -1,0 +1,12 @@
+default:
+  outputs:
+    dev:
+      type: redshift
+      threads: 1
+      host: "{{ env_var('REDSHIFT_HOST') }}"
+      port: 5439
+      user: "{{ env_var('REDSHIFT_USER') }}"
+      pass: "{{ env_var('REDSHIFT_PASSWORD') }}"
+      dbname: redshift-db
+      schema: public
+  target: dev
