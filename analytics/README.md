@@ -1,6 +1,6 @@
 # Analytics
 
-This repository contains code and instructions to manage and deploy *Airflow* and *dbt* DAGs on the DataOps platform.
+This folder contains code and instructions to manage and deploy *Airflow* and *dbt* DAGs.
 
 ## Project structure
 
@@ -13,15 +13,14 @@ This repository contains code and instructions to manage and deploy *Airflow* an
 
 ## Prerequisites
 
-The **AWS CLI** will be used to upload *Airflow* and *dbt* artifacts to **Amazon S3**.
+- Ensure that [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) is installed and configured on your machine
+- **AWS CLI** will be used to upload *Airflow* and *dbt* artifacts to **Amazon S3**
 
-Ensure [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) is installed and configured on your machine.
+### Update network configuration of Airflow's DAG for *dbt*
 
-### Update *dbt* Fargate task networking configurations
+*Airflow* uses [`ECSOperator`](https://airflow.apache.org/docs/stable/_api/airflow/contrib/operators/ecs_operator/index.html) to spawn a new **dbt** Fargate task, so you need to set the correct `network_configuration` for this particular [DAG](airflow_dags/redshift_transformations.py#L42-L47).
 
-*Airflow* uses the [`ECSOperator`](https://airflow.apache.org/docs/stable/_api/airflow/contrib/operators/ecs_operator/index.html) to spawn a new **dbt** Fargate task. To do that the correct `network_configuration` needs to be provided in the [DAG code](airflow_dags/redshift_transformations.py#L39-L44).
-
-Replace the values of `securityGroups` and `subnets` with the ones created when deploying the Data Platform [infrastructure](../dataops-infra).
+Replace values for `securityGroups` and `subnets` with ones created during the [infrastructure](../dataops-infra) deployment.
 
 ```py
 network_configuration={
@@ -32,25 +31,24 @@ network_configuration={
 }
 ```
 
-As an alternative to get the Security Group ID, run the following command:
+As an alternative, you can obtain security group's ID by run the following command:
 
 ```sh
 $ aws ec2 describe-security-groups --filters Name=group-name,Values=airflow-sg-cdk --query "SecurityGroups[*].{Name:GroupName,ID:GroupId}"
 ```
 
-To get the Subnets' IDs run the following command:
+To get subnets' IDs, run the following command:
 
+_**NOTE:** :warning: This command assumes that you deployed the project to `eu-west-1`. Make sure to use the correct subnet names if you choose different region._
 ```sh
 $ aws ec2 describe-subnets --filters Name=tag:Name,Values=isolated-subnet-eu-west-1a,isolated-subnet-eu-west-1b --query 'Subnets[*].SubnetId'
 ```
 
 ## Deploy DAGs
 
-As shown in the [architecture diagram](../README.md), *Airflow* and *dbt* DAGs are fetched from Amazon S3 by the AWS Fargate tasks running on Amazon ECS. 
+As we show in the [architecture diagram](../README.md), Airflow runs on AWS Fargate and fetches DAGs from an Amazon S3 bucket. Airflow Fargate tasks use a subprocess job to continuously sync local DAGs with the latest version available in Amazon S3. Whenever you trigger Airflow DAG that runs *dbt*, newly created Fargate task fetches *dbt* DAGs from Amazon S3 at runtime.
 
-*Airflow* Fargate tasks use a subprocess to continuously sync the local DAGs with the latest artifacts version available in Amazon S3. *dbt* DAGs are fetched from Amazon S3 when a new Fargate task is spawn by *Airflow* instead.
-
-To upload the latest version of the DAGs using the AWS CLI, update the `BUCKET_NAME` with the name of Amazon S3 bucket used to store the DAGs artifacts and run:
+You can use AWS CLI to upload the latest version of both Airflow's and *dbt's* DAGs. To do so, update the `BUCKET_NAME` placeholder in the following command with the one that you have set in [`.env`](../dataops-infra/.env):
 
 ```sh
 # from the root directory
@@ -60,4 +58,4 @@ $ aws s3 sync . s3://<BUCKET_NAME> --delete --exclude "*" --include "airflow_dag
 
 ### GitHub Actions
 
-A preconfigured GitHub Actions [workflow](.github/workflows/aws.yml) is also provided to automate the upload of the latest version of DAGs to Amazon S3. To use it replace the `<BUCKET_NAME>` with the name of Amazon S3 bucket used to store the DAGs artifacts and update the [trigger rule](.github/workflows/aws.yml#L1-L6) based on the desired branching strategy.
+We have also provided a preconfigured GitHub Actions [workflow](.github/workflows/aws.yml) to automate DAGs upload to Amazon S3. Update `<BUCKET_NAME>` and `<AWS_REGION>` placeholders with Amazon S3 bucket name that you have set in `.env` and AWS region to which you've deployed this project, respectively. Finally, update the [trigger rule](.github/workflows/aws.yml#L1-L6) based on preferred [events](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#about-workflow-events).
