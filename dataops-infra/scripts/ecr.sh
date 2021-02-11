@@ -1,5 +1,5 @@
 # Login to ECR
-aws ecr get-login-password --region eu-west-1 | \
+aws ecr get-login-password --region $AWS_REGION | \
 docker login --username AWS --password-stdin $ECR_URI
 # Push Airflow webserver image
 docker build -t airflow_webserver_cdk -f images/airflow/webserver.Dockerfile images/airflow/
