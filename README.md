@@ -21,7 +21,7 @@ The architecture includes following AWS services:
 
 In this repository there are two main project folders: [`dataops-infra`](dataops-infra) and [`analytics`](analytics). This setup is meant to demonstrate how DataOps can foster effective collaboration between data engineers and data analysts, separating the platform infrastructure code from the business logic. 
 
-These two folders should be considered as a two separate repositories following their own release cycles.
+These two folders should be considered as two separate repositories following their own release cycles.
 
 ### DataOps Platform Infrastructure
 
