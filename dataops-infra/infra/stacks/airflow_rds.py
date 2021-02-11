@@ -36,7 +36,6 @@ class RDSStack(core.Stack):
                 ec2.InstanceSize.MICRO,
             ),
             allocated_storage=20,
-            availability_zone="eu-west-1a",
             security_groups=[vpc.postgres_sg],
             removal_policy=core.RemovalPolicy.DESTROY,
             parameter_group=rds.ParameterGroup.from_parameter_group_name(
