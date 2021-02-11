@@ -107,7 +107,7 @@ ECR_URI=123456789012.dkr.ecr.eu-west-1.amazonaws.com
 
 ## Deployment
 
-If you've performed all steps from the the [Prerequisites](#prerequisites), you can now deploy the project.
+If you've performed all steps from the [Prerequisites](#prerequisites), you can now deploy the project.
 
 The deployment process is divided in three `make` rules:
 * `bootstrap` rule deploys infrastructure components which are not frequently updated (VPC, S3, ECR, Redis, RDS, Redshift)
@@ -202,7 +202,6 @@ Finally, to use provided GitHub actions workflows in this project do the followi
 * replace `<AWS_REGION>` with your AWS region
 * replace `<CODEBUILD_PROJECT_NAME>` with the name of AWS CodeBuild project that you created
 * update the [trigger rule](.github/workflows/airflow.yml#L1-L6) based on on preferred events
-
 
 
 
