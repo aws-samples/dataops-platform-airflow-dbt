@@ -1,12 +1,12 @@
 import os
-from random import randrange
+import secrets
 from aws_cdk import aws_s3 as s3, core
 
 
 class S3Stack(core.Stack):
     def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
-        rand_int = randrange(0, 100001, 2)
+        rand_int = secrets.randbelow(1000001)
 
         self._instance = s3.Bucket(
             self,
