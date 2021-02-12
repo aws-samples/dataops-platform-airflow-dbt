@@ -19,8 +19,8 @@ class AirflowClusterStack(core.Stack):
         # Fargate task execution role
         self.task_execution_role = iam.Role(
             self,
-            "ecsTaskExecutionRole",
-            role_name="ecsTaskExecutionRole",
+            "AirlfowTaskExecutionRole",
+            role_name="AirlfowTaskExecutionRole",
             assumed_by=iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
             managed_policies=[
                 iam.ManagedPolicy.from_aws_managed_policy_name(
