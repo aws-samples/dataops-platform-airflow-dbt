@@ -60,7 +60,7 @@ class AirflowClusterStack(core.Stack):
                 iam.PolicyStatement(
                     effect=iam.Effect.ALLOW,
                     actions=["iam:PassRole"],
-                    resources=["*"],
+                    resources=[self.task_execution_role.role_arn, self.airflow_task_role.role_arn],
                     conditions={
                         "StringLike": {"iam:PassedToService": "ecs-tasks.amazonaws.com"}
                     },
