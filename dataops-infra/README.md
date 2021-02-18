@@ -53,7 +53,7 @@ Before moving on with the project deployment, complete the following checks:
 * Ensure that [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) is installed and configured on your machine
 * Ensure that CDK is [installed and configured](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html#getting_started_prerequisites) on your machine
 
-_**NOTE:** :warning: This project uses CDK library version `1.73.0`, hence the same version or higher is required._
+_**NOTE:** :warning: This project uses CDK library version `1.90.0`, hence the same version or higher is required._
 
 ### Python virtual environment
 
