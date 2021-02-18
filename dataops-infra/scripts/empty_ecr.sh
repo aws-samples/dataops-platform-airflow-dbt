@@ -1,5 +1,5 @@
 #!/bin/bash
-declare -a ecr_repos=("airflow_cdk" "dbt_cdk")
+declare -a ecr_repos=("airflow_webserver_cdk" "airflow_scheduler_cdk" "airflow_worker_cdk" "dbt_cdk")
 
 for repo in "${ecr_repos[@]}"
 do
