@@ -12,19 +12,28 @@ class RDSStack(core.Stack):
     def __init__(self, scope: core.Construct, id: str, vpc: VpcStack, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        self.db_secret = sm.Secret.from_secret_complete_arn(
-            self, "postgresSecret", os.environ.get("POSTGRESS_PASS_ARN")
+        self.db_name = "airflow"
+        self.rds_secret = sm.Secret(
+            self,
+            "airflow-rds",
+            secret_name="airflow-rds-credentials",
+            description="Credentials for RDS PostgreSQL.",
+            generate_secret_string=sm.SecretStringGenerator(
+                secret_string_template='{"username": "airflow"}',
+                generate_string_key="password",
+                password_length=16,
+                exclude_characters='"@\\\/',
+                exclude_punctuation=True,
+            ),
         )
-        credentials = rds.Credentials.from_password(
-            username="airflow", password=self.db_secret.secret_value
-        )
+        credentials = rds.Credentials.from_secret(self.rds_secret)
 
         postgres = rds.DatabaseInstance(
             self,
             "RDS",
             credentials=credentials,
             instance_identifier="airflow-cdk",
-            database_name="airflow",
+            database_name=self.db_name,
             engine=rds.DatabaseInstanceEngine.postgres(
                 version=rds.PostgresEngineVersion.VER_9_6_18
             ),

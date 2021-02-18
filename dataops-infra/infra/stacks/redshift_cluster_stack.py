@@ -13,7 +13,6 @@ class RedshiftClusterStack(core.Stack):
     def __init__(self, scope: core.Construct, id: str, vpc: VpcStack, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        self.redshift_user = "redshift-user"
         subnet_group = redshift.ClusterSubnetGroup(
             self,
             id="RedshiftSubnetGroup",
@@ -22,11 +21,23 @@ class RedshiftClusterStack(core.Stack):
             vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.ISOLATED),
         )
 
+        self.redshift_secret = sm.Secret(
+            self,
+            "redshift-credentials",
+            secret_name="redshift-credentials",
+            description="Credentials for Amazon Redshift cluster.",
+            generate_secret_string=sm.SecretStringGenerator(
+                secret_string_template='{"username": "redshift-user"}',
+                generate_string_key="password",
+                password_length=32,
+                exclude_characters='"@\\\/',
+                exclude_punctuation=True,
+            ),
+        )
+
         redshift_login = redshift.Login(
-            master_username=self.redshift_user,
-            master_password=sm.Secret.from_secret_complete_arn(
-                self, "redshiftPasswordSecret", os.environ.get("REDSHIFT_PWD_ARN")
-            ).secret_value,
+            master_username="redshift-user",
+            master_password=self.redshift_secret.secret_value_from_json("password"),
         )
 
         redshift_s3_read_access_role = iam.Role(

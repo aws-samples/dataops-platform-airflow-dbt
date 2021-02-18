@@ -67,18 +67,20 @@ class AirflowServices(core.Stack):
                 stream_prefix="ecs", log_group=ns.airflow_cluster.webserver_log_group
             ),
             environment={
-                "AIRFLOW_DATABASE_NAME": "airflow",
+                "AIRFLOW_DATABASE_NAME": ns.rds.db_name,
                 "AIRFLOW_DATABASE_PORT_NUMBER": "5432",
                 "AIRFLOW_DATABASE_HOST": ns.rds.instance.db_instance_endpoint_address,
-                "AIRFLOW_DATABASE_USERNAME": "airflow",
                 "AIRFLOW_EXECUTOR": "CeleryExecutor",
                 "AIRFLOW_LOAD_EXAMPLES": "no",
                 "AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL": "30",
                 "BUCKET_NAME": bucket_name,
             },
             secrets={
+                "AIRFLOW_DATABASE_USERNAME": ecs.Secret.from_secrets_manager(
+                    ns.rds.rds_secret, field="username"
+                ),
                 "AIRFLOW_DATABASE_PASSWORD": ecs.Secret.from_secrets_manager(
-                    ns.rds.db_secret
+                    ns.rds.rds_secret, field="password"
                 ),
                 "AIRFLOW_FERNET_KEY": ecs.Secret.from_secrets_manager(
                     fernet_key_secret
@@ -130,10 +132,9 @@ class AirflowServices(core.Stack):
                 stream_prefix="ecs", log_group=ns.airflow_cluster.scheduler_log_group
             ),
             environment={
-                "AIRFLOW_DATABASE_NAME": "airflow",
+                "AIRFLOW_DATABASE_NAME": ns.rds.db_name,
                 "AIRFLOW_DATABASE_PORT_NUMBER": "5432",
                 "AIRFLOW_DATABASE_HOST": ns.rds.instance.db_instance_endpoint_address,
-                "AIRFLOW_DATABASE_USERNAME": "airflow",
                 "AIRFLOW_EXECUTOR": "CeleryExecutor",
                 "AIRFLOW_WEBSERVER_HOST": "webserver.airflow",
                 "AIRFLOW_LOAD_EXAMPLES": "no",
@@ -142,8 +143,11 @@ class AirflowServices(core.Stack):
                 "BUCKET_NAME": bucket_name,
             },
             secrets={
+                "AIRFLOW_DATABASE_USERNAME": ecs.Secret.from_secrets_manager(
+                    ns.rds.rds_secret, field="username"
+                ),
                 "AIRFLOW_DATABASE_PASSWORD": ecs.Secret.from_secrets_manager(
-                    ns.rds.db_secret
+                    ns.rds.rds_secret, field="password"
                 ),
                 "AIRFLOW_FERNET_KEY": ecs.Secret.from_secrets_manager(
                     fernet_key_secret
@@ -183,10 +187,9 @@ class AirflowServices(core.Stack):
                 stream_prefix="ecs", log_group=ns.airflow_cluster.worker_log_group
             ),
             environment={
-                "AIRFLOW_DATABASE_NAME": "airflow",
+                "AIRFLOW_DATABASE_NAME": ns.rds.db_name,
                 "AIRFLOW_DATABASE_PORT_NUMBER": "5432",
                 "AIRFLOW_DATABASE_HOST": ns.rds.instance.db_instance_endpoint_address,
-                "AIRFLOW_DATABASE_USERNAME": "airflow",
                 "AIRFLOW_EXECUTOR": "CeleryExecutor",
                 "AIRFLOW_WEBSERVER_HOST": "webserver.airflow",
                 "AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL": "30",
@@ -195,8 +198,11 @@ class AirflowServices(core.Stack):
                 "BUCKET_NAME": bucket_name,
             },
             secrets={
+                "AIRFLOW_DATABASE_USERNAME": ecs.Secret.from_secrets_manager(
+                    ns.rds.rds_secret, field="username"
+                ),
                 "AIRFLOW_DATABASE_PASSWORD": ecs.Secret.from_secrets_manager(
-                    ns.rds.db_secret
+                    ns.rds.rds_secret, field="password"
                 ),
                 "AIRFLOW_FERNET_KEY": ecs.Secret.from_secrets_manager(
                     fernet_key_secret
