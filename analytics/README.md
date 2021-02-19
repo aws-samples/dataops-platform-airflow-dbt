@@ -51,7 +51,7 @@ As we show in the [architecture diagram](../README.md), Airflow runs on AWS Farg
 You can use AWS CLI to upload the latest version of both Airflow's and *dbt's* DAGs. To do so, update the `BUCKET_NAME` placeholder in the following command with the one that you have set in [`.env`](../dataops-infra/.env):
 
 ```sh
-# from the root directory
+# from the analytics folder
 
 $ aws s3 sync . s3://<BUCKET_NAME> --delete --exclude "*" --include "airflow_dags/*" --include "dbt_dags/*"
 ```

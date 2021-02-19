@@ -2,7 +2,6 @@ import os
 from aws_cdk import (
     core,
     aws_ecs as ecs,
-    aws_secretsmanager as sm,
 )
 from types import SimpleNamespace
 from stacks.airflow_cluster_stack import AirflowClusterStack
@@ -28,10 +27,6 @@ class DBT(core.Stack):
         super().__init__(scope, id, **kwargs)
         ns = SimpleNamespace(**props)
 
-        redshift_password_secret = sm.Secret.from_secret_arn(
-            self, "redshiftPasswordSecret", os.environ.get("REDSHIFT_PWD_ARN")
-        )
-
         bucket_name = os.environ.get("BUCKET_NAME")
         dbt_task = ecs.FargateTaskDefinition(
             self,
@@ -53,12 +48,14 @@ class DBT(core.Stack):
             ),
             environment={
                 "BUCKET_NAME": bucket_name,
-                "REDSHIFT_USER": ns.redshift.redshift_user,
                 "REDSHIFT_HOST": ns.redshift.instance.cluster_endpoint.hostname,
             },
             secrets={
+                "REDSHIFT_USER": ecs.Secret.from_secrets_manager(
+                    ns.redshift.redshift_secret, field="username"
+                ),
                 "REDSHIFT_PASSWORD": ecs.Secret.from_secrets_manager(
-                    redshift_password_secret
+                    ns.redshift.redshift_secret, field="password"
                 ),
             },
         )

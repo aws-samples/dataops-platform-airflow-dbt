@@ -83,15 +83,13 @@ Store your `fernet_key` to [**AWS Secrets Manager**](https://aws.amazon.com/secr
 aws secretsmanager create-secret –name fernetKeySecret –-description “Fernet key for Airflow” –secret-string YOUR_FERNET_KEY
 ```
 
-### Secrets
+### Environment variables
 
-This project uses **AWS Secrets Manager** to safely store credentials for Amazon Redshift and Amazon RDS. Once you create *secrets*, you can set environment variables in `.env` file.
+Once you created the `fernet_key` secret, you can set environment variables in `.env` file.
 
 * `AWS_REGION`: AWS region to which you wish to deploy this project
 * `BUCKET_NAME`: choose a unique name for an Amazon S3 bucket that will host artifacts for *Airflow* and *dbt* DAGs
 * `FERNET_SECRET_ARN`: ARN of the secret with the `fernet_key`
-* `REDSHIFT_PWD_ARN`: ARN of the secret with the Amazon Redshift cluster password
-* `POSTGRESS_PASS_ARN`: ARN of the secret with the RDS PostgreSQL password
 * `ECR_URI`: a unique identifier for the Amazon ECR repository. It can be easily composed with your AWS Account ID and AWS region: `<AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com`
 
 Assuming that the project will be deployed in `eu-west-1` region, the `.env` file will look like this:
@@ -100,8 +98,6 @@ Assuming that the project will be deployed in `eu-west-1` region, the `.env` fil
 AWS_REGION=eu-west-1
 BUCKET_NAME=my-unique-dataops-bucket-name
 FERNET_SECRET_ARN=arn:aws:secretsmanager:eu-west-1:123456789012:secret:airflow/fernet_key-AbCdEf
-REDSHIFT_PWD_ARN=arn:aws:secretsmanager:eu-west-1:123456789012:secret:redshift/password-AbCdEf
-POSTGRESS_PASS_ARN=arn:aws:secretsmanager:eu-west-1:123456789012:secret:airflow/postgres/password-AbCdEf
 ECR_URI=123456789012.dkr.ecr.eu-west-1.amazonaws.com
 ```
 
@@ -156,14 +152,13 @@ _**NOTE:** :warning: AWS CDK CLI will ask for your permissions to deploy specifi
 Follow this [tutorial](https://docs.aws.amazon.com/redshift/latest/gsg/rs-gsg-create-sample-db.html) to load example data into a Amazon Redshift cluster using the [Query Editor](https://docs.aws.amazon.com/redshift/latest/mgmt/query-editor.html). To log in to the Query Editor, use the following:
 - Database name: `redshift-db`
 - Database user: `redshift-user`
-- Database password: password that you stored to AWS Secrets Manager
 
 For uploading the sample data into Amazon S3, use the bucket that was created during deployment.
 
-To copy data from Amazon S3 into Redshift, the `copy` command needs ARN of the Redshift IAM role that was created during deployment. Execute the following AWS CLI command and look under `"IamRoles"`:
+To copy data from Amazon S3 into Redshift, the `copy` command needs ARN of the Redshift IAM role that was created during deployment. Execute the following command to retrieve the ARN:
 
 ```sh
-aws redshift describe-clusters --output json
+aws redshift describe-clusters --query 'Clusters[*].IamRoles[*].IamRoleArn'
 ```
 
 ### Clean up 
