@@ -1,6 +1,6 @@
 # DataOps Platform with Apache Airflow and dbt on AWS
 
-This repository contains code to deploy the architecture described in the blog post: *"Build DataOps platform to break silos between engineers and analysts"*.
+This repository contains code to deploy the architecture described in the blog post: [*"Build DataOps platform to break silos between engineers and analysts"*](https://aws.amazon.com/tr/blogs/big-data/build-a-dataops-platform-to-break-silos-between-engineers-and-analysts/?nc1=h_ls&advocacy_source=everyonesocial&trk=global_employee_advocacy&sc_channel=sm&es_id=ab2ae17684).
 
 ---
 
