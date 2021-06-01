@@ -123,6 +123,7 @@ class VpcStack(core.Stack):
             "ECR": ec2.InterfaceVpcEndpointAwsService.ECR,
             "ECR_DOCKER": ec2.InterfaceVpcEndpointAwsService.ECR_DOCKER,
             "CLOUDWATCH_LOGS": ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
+            "SECRETS_MANAGER": ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
         }
 
         for name, service in endpoints.items():
